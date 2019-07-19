@@ -48,7 +48,6 @@ class EffectiveGrid_PostElement extends EffectiveGrid_GridElement
 				//$flythumb = fly_get_attachment_image_src($post_image_id, array(225,200), array( 'center', 'top' ));
 				$flythumb = fly_get_attachment_image_src($post_image_id, array(600,400), array('center', 'center'));
 						
-			//TODO: AIS specific, should be a filter/hook/etc
 			/*if ($ratio>2) {
 				//$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), false);
 				$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), array( 'center', 'top' ));

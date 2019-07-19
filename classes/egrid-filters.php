@@ -65,7 +65,6 @@ class EffectiveGrid_Filters
 		$ret .= '<div class="effective-grid-filter-buttons">';
 		$ret .= '	<button class="egrid-button egrid-button-update-filter" type="submit">' . self::_('update_filters') . '</button>';
 		$ret .= '	<a class="egrid-button egrid-button-reset-filter" href="' . parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) . '">' . self::_('reset_filters') . '</a>';
-		//$ret .= '	<button class="egrid-button egrid-button-reset-filter" type="reset" >Reset Filters</button>';
 		$ret .= '</div>';
 		$ret .= '</form></div>';
 		

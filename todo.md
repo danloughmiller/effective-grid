@@ -1,0 +1,2 @@
+- Make PostElement not dependent on Fly Image Resizer plugin
+- Remove embedded LESS plugin
