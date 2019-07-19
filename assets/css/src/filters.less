@@ -1,0 +1,77 @@
+.effective-grid-filters {
+
+	margin: 0 0 10px 0;
+
+	.effective-grid-filter {
+		vertical-align: top;
+		display: inline-block;
+		box-sizing: border-box;
+		padding: 10px;
+		
+		&:last-child { padding-right: 0; }
+	}
+
+	.effective-grid-title {
+		display: block;
+		font-weight: bold;
+	}
+	
+	input, select, a.egrid-button, button {
+		border: 1px solid #aaa;
+		background: white;
+		border-radius: 4px;
+		font-size: 16px;
+		padding: 8px 5px 8px 5px;
+		width: 100%;
+		box-sizing: border-box;
+		font-family: "Open Sans", sans-serif;
+	}
+	
+	/* Buttons */
+	[type=submit], button, a.egrid-button {
+		background: #eee;
+		border-color: #eee;
+		padding-left: 10px;
+		padding-right: 10px;
+		color: #333;
+		width: 150px !important;
+		text-align: center;
+		cursor: pointer;
+		display: inline-block;
+	}
+	
+	/* Primary color on update button */
+	[type=submit] {
+		background: #45bcde;
+		color: #FFF;
+	}
+	
+	.effective-grid-filter-buttons {
+		width: 100%;
+		display: block;
+		text-align: center;
+		padding-right: 10px;
+		box-sizing: border-box;
+	}
+	
+	option {
+		font-size: 16px;
+		font-family: "Open Sans";
+	}
+	
+	
+	/* Select2 Support */
+	.select2-selection {
+		padding: 4px 0 5px 0;
+		height: auto !important;
+		border-color: #aaa;
+	}
+	
+	//TODO - THIS IS ALL TOO SPECIFIC TO ALWAYSINSTONE, USE BASIC STYLING BY DEFAULT
+	.select2-selection__arrow { top: 7px !important; }
+
+}
+
+.egrid-no-search .select2-search {
+    display:none
+}

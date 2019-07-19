@@ -1,0 +1,37 @@
+.effective-grid-pagination {
+
+	ul {
+		width: 100%;
+		padding: 0;
+		margin: 20px 0;
+		text-align: center;
+	}
+	
+	li {
+		list-style: none;
+		display: inline-block;
+		border: 1px solid #ccc;
+		text-align: center;
+		margin: 0 5px;
+		
+		a {
+			display: inline-block;
+			width: 3em;
+			padding: .75em;
+			box-sizing: border-box;
+			
+			&:hover {
+				background: #ccc;
+				color: #000;
+			}
+		}
+		
+		&.egrid-current-page a { font-weight: bold; background: #eee; }
+	}
+	
+	.egrid-page-link-first.egrid-current-page,
+	.egrid-page-link-last.egrid-current-page { display: none; }
+	
+	
+
+}
