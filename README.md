@@ -1,2 +1,2 @@
 # effective-grid
-A lightweight, programmer-orientend grid plugin for Wordpress
+A lightweight, programmer-oriented grid plugin for Wordpress
