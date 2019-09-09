@@ -46,10 +46,15 @@ class EffectiveGrid_Grid
 		
 		$ret .= 	'</ul>';
 		$ret .= '</div>';
-		
-		if ($this->_renderPages && $this->paged && ($_renderSinglePagePagination || $this->getPageCount()>1))
-			$ret .=$this->renderPagination();
-		
+        
+
+        //$ret .= "RSP".var_export($this->_renderSinglePagePagination,true);
+        //$ret .= "PC".var_export($this->getPageCount(),true);
+
+		if ($this->_renderPages && $this->paged && ($this->_renderSinglePagePagination || $this->getPageCount()>1)) {
+            $ret .= $this->renderPagination();
+        }
+        
 		$ret .= '</div>';
 		
 		return $ret;
@@ -110,7 +115,7 @@ class EffectiveGrid_Grid
 		$ret = '';
 		
         $ret .= $this->renderPaginationElement(1, '&laquo;', 'egrid-page-link-first');
-        var_dump($this->getElementCount());
+
 		for ($i=$x;$i<=$y;$i++) {
             
 			    $ret .= $this->renderPaginationElement($i);
@@ -132,7 +137,9 @@ class EffectiveGrid_Grid
 	
 	function getElements() {}
 	function getElementCount() { }
-	function getPageCount()	{ return ceil($this->getElementCount() / $this->itemsPerPage);}
+	function getPageCount()	{ 
+        return ceil($this->getElementCount() / $this->itemsPerPage);
+    }
 	function setPage($page) { $this->page = $page; }
 	
 	function getClasses($additional=array())

@@ -64,7 +64,9 @@ class EffectiveGrid_PostGrid extends EffectiveGrid_Grid
 	}
 	
 	function getElementCount() {
-        $q = get_posts($this->constructQuery());
+        $query = $this->constructQuery();
+        $query['posts_per_page']=-1;
+        $q = get_posts($query);
 		return count($q);
 	}
 	
