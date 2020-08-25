@@ -3,7 +3,7 @@
 Plugin Name: Effective Grid
 Plugin URI:  
 Description: 
-Version:     0.1.1
+Version:     0.4.0
 Author:      Daniel Loughmiller / Effect Web Agency
 Author URI:  https://www.effectwebagency.com
 */
@@ -13,7 +13,7 @@ Author URI:  https://www.effectwebagency.com
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
-DEFINE('EGRID_DEV_MODE', true);
+DEFINE('EGRID_DEV_MODE', false);
 DEFINE('EGRID_FILTER_PREFIX', 'egrid-');
 
 include_once(dirname(__FILE__).'/classes/egrid-grid.php');
@@ -32,18 +32,11 @@ class EffectiveGrid
         add_action( 'wp_enqueue_scripts', array( $this, 'register_plugin_scripts' ) );
 		add_action( 'wp', array($this, 'register_plugin_shortcodes'));
 		
-		if (defined('EGRID_DEV_MODE')) {;
-			include_once(plugin_dir_path(__FILE__) . 'assets/third-party/less/wp-less.php');
-		}
 	}
 	
 	public function register_plugin_styles()
 	{
-		if (defined('EGRID_DEV_MODE')) {
-			wp_register_style( 'effective-grid', plugins_url( 'effective-grid/assets/css/src/egrid.less' ) );
-		} else {
-			wp_register_style( 'effective-grid', plugins_url( 'effective-grid/assets/css/egrid.css' ) );			
-		}
+		wp_register_style( 'effective-grid', plugins_url( 'effective-grid/assets/css/egrid.css' ) );			
 		
 		wp_register_style( 'select2', plugins_url( 'effective-grid/assets/third-party/select2/css/select2.min.css' ) );	
 		

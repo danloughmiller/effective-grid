@@ -26,8 +26,7 @@ class EffectiveGrid_PostGrid extends EffectiveGrid_Grid
 			'posts_per_page'=>$this->itemsPerPage,
 			'paged'=>$this->page,
             'orderby'=>'title',
-            'order'=>'ASC',
-            'suppress_filters'=>0
+            'order'=>'ASC'
         );
         
         if (is_array($this->additional_query_args))

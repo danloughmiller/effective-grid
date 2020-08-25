@@ -46,10 +46,6 @@ class EffectiveGrid_Grid
 		
 		$ret .= 	'</ul>';
 		$ret .= '</div>';
-        
-
-        //$ret .= "RSP".var_export($this->_renderSinglePagePagination,true);
-        //$ret .= "PC".var_export($this->getPageCount(),true);
 
 		if ($this->_renderPages && $this->paged && ($this->_renderSinglePagePagination || $this->getPageCount()>1)) {
             $ret .= $this->renderPagination();

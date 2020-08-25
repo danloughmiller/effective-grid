@@ -1,0 +1,31 @@
+.effective-grid-pagination ul {
+  width: 100%;
+  padding: 0;
+  margin: 20px 0;
+  text-align: center;
+}
+.effective-grid-pagination li {
+  list-style: none;
+  display: inline-block;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin: 0 5px;
+}
+.effective-grid-pagination li a {
+  display: inline-block;
+  width: 3em;
+  padding: 0.75em;
+  box-sizing: border-box;
+}
+.effective-grid-pagination li a:hover {
+  background: #ccc;
+  color: #000;
+}
+.effective-grid-pagination li.egrid-current-page a {
+  font-weight: bold;
+  background: #eee;
+}
+.effective-grid-pagination .egrid-page-link-first.egrid-current-page,
+.effective-grid-pagination .egrid-page-link-last.egrid-current-page {
+  display: none;
+}
