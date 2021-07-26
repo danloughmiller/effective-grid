@@ -1,3 +1,8 @@
+
+#0.4.1
+- Defined Option filters will no longer show all results if there are no matches
+- Grid will now show a message if there are no results
+
 #0.4.0
 - LessCSS plugin removed and compiled CSS added to repo
 - suppress_elements no longer defined by PostGrid class

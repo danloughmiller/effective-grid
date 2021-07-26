@@ -39,12 +39,16 @@ class EffectiveGrid_Grid
 		if ($this->_renderFilters && !empty($this->filters))
 			$ret .= $this->filters->render();
 		
+		$elements = $this->getElements();
+	
 		$ret .= '<div class="effective-grid-elements-container">';
-		$ret .= 	'<ul class="effective-grid-elements">';
-		
-		$ret .= $this->renderElements();
-		
-		$ret .= 	'</ul>';
+		if (!empty($elements)) {
+			$ret .= 	'<ul class="effective-grid-elements">';
+			$ret .= $this->renderElements($elements);
+			$ret .= 	'</ul>';
+		} else {
+			$ret .= $this->renderEmptyResult();
+		}
 		$ret .= '</div>';
 
 		if ($this->_renderPages && $this->paged && ($this->_renderSinglePagePagination || $this->getPageCount()>1)) {
@@ -55,6 +59,11 @@ class EffectiveGrid_Grid
 		
 		return $ret;
 	}
+
+	function renderEmptyResult()
+    {
+        return '<div class="effective-grid-empty"><p>No results matched your search</p></div>';
+    }
 	
 	function renderElements()
 	{
