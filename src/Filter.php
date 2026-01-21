@@ -5,30 +5,38 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 abstract class Filter
 {
-	public $id = '';
-	public $title = "";
-	public $placeholder = "";
+	protected string $id;
+	protected string $title;
+	protected string $placeholder;
+	public bool $renderTitle = true;
 
-	public $_renderTitle = true;
-	public $_renderEmptyTitle = false;
-
-	public function __construct($id, $title, $placeholder='')
+	public function __construct(string $id, string $title, string $placeholder = '')
 	{
 		$this->id = $id;
 		$this->title = $title;
 		$this->placeholder = $placeholder;
 	}
 
-	function render($index=false)
+	public function getId(): string
 	{
+		return $this->id;
+	}
 
-		$classes = $this->getClasses(!empty($index)?'effective-grid-filter-index-'.$index:false);
-		$ret = '<div id="effective-grid-filter-' . $this->id . '" class="' . implode(" ", $classes) . '">';
-		if ($this->_renderTitle && ($this->_renderEmptyTitle || !empty($this->title)))
-			$ret .= '<span class="effective-grid-title">' . $this->title .'</span>';
+	public function getPlaceholder(): string
+	{
+		return $this->placeholder;
+	}
+
+	public function render(): string
+	{
+		$classes = $this->getClasses();
+		$ret = '<div id="effective-grid-filter-' . esc_attr($this->id) . '" class="' . esc_attr(implode(' ', $classes)) . '">';
+
+		if ($this->renderTitle && !empty($this->title)) {
+			$ret .= '<span class="effective-grid-title">' . esc_html($this->title) . '</span>';
+		}
 
 		$ret .= $this->renderElement();
-
 		$ret .= '</div>';
 
 		return $ret;
@@ -36,17 +44,19 @@ abstract class Filter
 
 	abstract protected function renderElement(): string;
 
-	protected function getClasses($additional = array())
+	protected function getClasses(): array
 	{
-		if (empty($additional))
-			$additional = array();
-
-		if (is_string($additional))
-			$additional = array($additional);
-
-		return array_merge(array('effective-grid-filter'), $additional);
+		return ['effective-grid-filter'];
 	}
 
 	abstract public function constructQuery(array &$args, array &$tax_query): void;
 
+	/**
+	 * Returns URL query parameters to preserve this filter's current state.
+	 * @return array<string, string>
+	 */
+	public function getUrlParams(): array
+	{
+		return [];
+	}
 }

@@ -2,53 +2,59 @@
 namespace EffectiveGrid\Grids;
 
 use EffectiveGrid\Grid;
+use EffectiveGrid\Filters;
 use EffectiveGrid\Elements\PostElement;
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 class PostGrid extends Grid
 {
-	public $post_type = false;
-    public $taxonomies = array();
-    public $additional_query_args = array();
-    public $createElementCallback = false;
+	protected string $postType;
+	protected array $taxonomies;
+	protected array $additionalQueryArgs;
+	/** @var callable|null */
+	protected $createElementCallback;
 
-	public function __construct($grid_id, $post_type='post', $taxonomies = array(), $additional_query_args=array(), $createElementCallback = false)
-	{
-		parent::__construct($grid_id, false);
+	public function __construct(
+		string $id,
+		string $postType = 'post',
+		array $taxonomies = [],
+		array $additionalQueryArgs = [],
+		?callable $createElementCallback = null,
+		?Filters $filters = null
+	) {
+		parent::__construct($id, $filters);
 
-		$this->post_type = $post_type;
-        $this->taxonomies = $taxonomies;
-        $this->additional_query_args = $additional_query_args;
-        $this->createElementCallback = $createElementCallback;
+		$this->postType = $postType;
+		$this->taxonomies = $taxonomies;
+		$this->additionalQueryArgs = $additionalQueryArgs;
+		$this->createElementCallback = $createElementCallback;
 	}
 
-	protected function constructQuery()
+	protected function constructQuery(): array
 	{
-		global $wpdb;
+		$args = [
+			'post_type' => $this->postType,
+			'posts_per_page' => $this->itemsPerPage,
+			'paged' => $this->page,
+			'orderby' => 'title',
+			'order' => 'ASC'
+		];
 
-		$args = array(
-			'post_type'=>$this->post_type,
-			'posts_per_page'=>$this->itemsPerPage,
-			'paged'=>$this->page,
-            'orderby'=>'title',
-            'order'=>'ASC'
-        );
+		$args = array_merge($args, $this->additionalQueryArgs);
 
-        if (is_array($this->additional_query_args))
-            $args = array_merge($args, $this->additional_query_args);
+		$filters = $this->getFilters();
+		if (!empty($filters->filters)) {
+			$tax_query = [];
 
-		//If this has filters we'll apply those now
-		if (!empty($this->filters->filters) && count($this->filters->filters)>0) {
-			$tax_query = array();
-
-			foreach ($this->filters->filters as $filter) {
+			foreach ($filters->filters as $filter) {
 				$filter->constructQuery($args, $tax_query);
 			}
 
-			$args['tax_query'] = $tax_query;
-
-        }
+			if (!empty($tax_query)) {
+				$args['tax_query'] = $tax_query;
+			}
+		}
 
 		return $args;
 	}
@@ -57,12 +63,12 @@ class PostGrid extends Grid
 	{
 		$posts = get_posts($this->constructQuery());
 
-		$elements = array();
-		foreach ($posts as $r) {
-			if (!empty($this->createElementCallback)) {
-				$elements[] = call_user_func($this->createElementCallback, $r);
+		$elements = [];
+		foreach ($posts as $post) {
+			if ($this->createElementCallback !== null) {
+				$elements[] = call_user_func($this->createElementCallback, $post);
 			} else {
-				$elements[] = new PostElement($r);
+				$elements[] = new PostElement($post);
 			}
 		}
 		return $elements;
@@ -72,27 +78,23 @@ class PostGrid extends Grid
 	{
 		$query = $this->constructQuery();
 		$query['posts_per_page'] = -1;
-		$q = get_posts($query);
-		return count($q);
+		$query['fields'] = 'ids';
+		return count(get_posts($query));
 	}
 
-	function getPaginationLink($pindex) {
-		$link = '?egrid_page='.$pindex;
+	protected function getPaginationLink(int $pageIndex): string
+	{
+		$params = ['egrid_page' => (string)$pageIndex];
 
-		if (!empty($this->filters->filters) && count($this->filters->filters)>0) {
-			foreach ($this->filters->filters as $filter) {
-				if (!empty($filter->selected)) {
-					$link .= '&egrid_filter[' . $filter->taxonomy . ']=' . $filter->selected;
-				}
-			}
+		foreach ($this->getFilters()->filters as $filter) {
+			$params = array_merge($params, $filter->getUrlParams());
 		}
 
-		return $link;
+		return '?' . http_build_query($params);
 	}
 
-	function getClasses($additional=array())
+	protected function getClasses(): array
 	{
-		return parent::getClasses(array('effective-grid-postgrid'));
+		return array_merge(parent::getClasses(), ['effective-grid-postgrid']);
 	}
-
 }

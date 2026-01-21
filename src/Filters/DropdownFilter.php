@@ -7,34 +7,37 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 abstract class DropdownFilter extends Filter
 {
-	public $options = array();
-	public $selected = '';
+	/** @var array<string, array{label: string, data: mixed}> */
+	protected array $options = [];
+	public string $selected = '';
+	public bool $renderSelect2 = true;
 
-	public $_renderSelect2 = true;
-
-	public function __construct($id, $title, $placeholder='', $options=array(), $selected='')
-	{
+	public function __construct(
+		string $id,
+		string $title,
+		string $placeholder = '',
+		array $options = [],
+		string $selected = ''
+	) {
 		parent::__construct($id, $title, $placeholder);
 		$this->options = $options;
 		$this->selected = $selected;
 	}
 
-	protected function getSelectName() { }
+	abstract protected function getSelectName(): string;
+
 	protected function renderElement(): string
 	{
-		$ret = '<select class="' . ($this->_renderSelect2?'egrid-select2':'') . '" data-minimum-results-for-search="Infinity" name="' . $this->getSelectName() . '">';
+		$classes = $this->renderSelect2 ? 'egrid-select2' : '';
+		$ret = '<select class="' . esc_attr($classes) . '" data-minimum-results-for-search="Infinity" name="' . esc_attr($this->getSelectName()) . '">';
 
-		if (!empty($this->placeholder))
-			$ret .= $this->renderOption("", $this->placeholder);
+		$placeholder = $this->getPlaceholder();
+		if (!empty($placeholder)) {
+			$ret .= $this->renderOption('', $placeholder);
+		}
 
-
-		if (is_array($this->options)) {
-			foreach ($this->options as $key=>$value) {
-                $data = @$value['data'];
-                $label = $value['label'];
-
-				$ret .= $this->renderOption($key, $label, $data);
-			}
+		foreach ($this->options as $key => $value) {
+			$ret .= $this->renderOption((string)$key, $value['label'], $value['data'] ?? null);
 		}
 
 		$ret .= '</select>';
@@ -42,27 +45,24 @@ abstract class DropdownFilter extends Filter
 		return $ret;
 	}
 
-	protected function renderOption($key, $label, $data=false)
+	protected function renderOption(string $key, string $label, mixed $data = null): string
 	{
-		return '<option ' . ($this->selected===true||$this->selected==$key?'SELECTED':'') . ' value="'.$key.'">' . $label . '</option>';
+		$isSelected = $this->selected === $key || ($this->selected !== '' && $this->selected == $key);
+		return '<option ' . ($isSelected ? 'selected' : '') . ' value="' . esc_attr($key) . '">' . esc_html($label) . '</option>';
 	}
 
-	protected function getClasses($additional = array())
+	protected function getClasses(): array
 	{
-		return array_merge(
-			parent::getClasses($additional),
-			array('effective-grid-dropdown-filter')
-		);
+		return array_merge(parent::getClasses(), ['effective-grid-dropdown-filter']);
 	}
 
-	public function addOption($key, $value, $data=false)
+	public function addOption(string $key, string $label, mixed $data = null): void
 	{
-        $this->options[$key] = array('label'=>$value, 'data'=>$data);
-        $this->addChildren($key, $value, $data);
-    }
+		$this->options[$key] = ['label' => $label, 'data' => $data];
+		$this->addChildren($key, $label, $data);
+	}
 
-    public function addChildren($key, $value, $data=false)
-    {
-
-    }
+	protected function addChildren(string $key, string $label, mixed $data = null): void
+	{
+	}
 }

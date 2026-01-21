@@ -5,24 +5,26 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 class DefinedOptionsListFilter extends DropdownFilter
 {
-	public $taxonomy = '';
-
-	public function __construct($id, $title, $placeholder='', $options=array(), $selected='')
-	{
-        parent::__construct($id, $title, $placeholder, $options, $selected);
-    }
-
-
-	function getSelectName()
-	{
-		return 'egrid_filter[' . $this->id . ']';
+	public function __construct(
+		string $id,
+		string $title,
+		string $placeholder = '',
+		array $options = [],
+		string $selected = ''
+	) {
+		parent::__construct($id, $title, $placeholder, $options, $selected);
 	}
 
-	protected function getClasses($additional=array())
+	protected function getSelectName(): string
+	{
+		return 'egrid_filter[' . $this->getId() . ']';
+	}
+
+	protected function getClasses(): array
 	{
 		return array_merge(
-			parent::getClasses($additional),
-			array('effective-grid-definedoptions-filter', 'effective-grid-definedoptions-filter-'.$this->id)
+			parent::getClasses(),
+			['effective-grid-definedoptions-filter', 'effective-grid-definedoptions-filter-' . $this->getId()]
 		);
 	}
 
@@ -34,14 +36,25 @@ class DefinedOptionsListFilter extends DropdownFilter
 			if (!empty($definedSet)) {
 				$args['post__in'] = $definedSet;
 			} else {
-				//Wordpress will interpret an empty array as 'all posts' not none, we'll provide some fake post ids to prevent that
-				$args['post__in'] = array(-1,-2,-3);
+				// WordPress interprets an empty array as 'all posts', use invalid IDs to return none
+				$args['post__in'] = [-1];
 			}
 		}
 	}
 
-    protected function getDefinedOptionsBySlug($slug)
-    {
-        return array();
-    }
+	/**
+	 * @return int[]
+	 */
+	protected function getDefinedOptionsBySlug(string $slug): array
+	{
+		return [];
+	}
+
+	public function getUrlParams(): array
+	{
+		if (empty($this->selected)) {
+			return [];
+		}
+		return ['egrid_filter[' . $this->getId() . ']' => $this->selected];
+	}
 }

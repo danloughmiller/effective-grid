@@ -5,155 +5,156 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 abstract class Grid
 {
-	public $grid_id = false;
-	public $filters = null;
+	protected string $id;
+	protected Filters $filters;
 
-	public $_renderFilters = true;
-	public $_renderPages = true;
-	public $_renderSinglePagePagination = false;
+	public bool $renderFilters = true;
+	public bool $renderPagination = true;
+	public bool $renderSinglePagePagination = false;
 
-	public $elements = array();
+	public bool $paged = true;
+	public int $itemsPerPage = 50;
+	public int $page = 1;
 
-	//Paging
-	public $paged = true;
-	public $itemsPerPage = 50;
-	public $page = 1;
-
-
-	public function __construct($grid_id, $filters = false)
+	public function __construct(string $id, ?Filters $filters = null)
 	{
-		$this->grid_id = $grid_id;
-
-		if (!empty($filters)) {
-			$this->filters = $filters;
-		} else {
-			$this->filters = new Filters();
-		}
+		$this->id = $id;
+		$this->filters = $filters ?? new Filters();
 	}
 
-	public function render()
+	public function getId(): string
 	{
-		$ret = '<div id="effect-grid-'.$this->grid_id . '" class="' . implode(' ', $this->getClasses()) . '">';
+		return $this->id;
+	}
 
-		if ($this->_renderFilters && !empty($this->filters))
+	public function getFilters(): Filters
+	{
+		return $this->filters;
+	}
+
+	public function render(): string
+	{
+		$ret = '<div id="effective-grid-' . esc_attr($this->id) . '" class="' . esc_attr(implode(' ', $this->getClasses())) . '">';
+
+		if ($this->renderFilters) {
 			$ret .= $this->filters->render();
+		}
 
 		$elements = $this->getElements();
 
 		$ret .= '<div class="effective-grid-elements-container">';
 		if (!empty($elements)) {
-			$ret .= 	'<ul class="effective-grid-elements">';
+			$ret .= '<ul class="effective-grid-elements">';
 			$ret .= $this->renderElements($elements);
-			$ret .= 	'</ul>';
+			$ret .= '</ul>';
 		} else {
 			$ret .= $this->renderEmptyResult();
 		}
 		$ret .= '</div>';
 
-		if ($this->_renderPages && $this->paged && ($this->_renderSinglePagePagination || $this->getPageCount()>1)) {
-            $ret .= $this->renderPagination();
-        }
+		if ($this->renderPagination && $this->paged && ($this->renderSinglePagePagination || $this->getPageCount() > 1)) {
+			$ret .= $this->renderPaginationBlock();
+		}
 
 		$ret .= '</div>';
 
 		return $ret;
 	}
 
-	function renderEmptyResult()
-    {
-        return '<div class="effective-grid-empty"><p>No results matched your search</p></div>';
-    }
-
-	function renderElements()
+	protected function renderEmptyResult(): string
 	{
+		return '<div class="effective-grid-empty"><p>No results matched your search</p></div>';
+	}
 
+	/**
+	 * @param Element[] $elements
+	 */
+	protected function renderElements(array $elements): string
+	{
 		$ret = '';
-
-		//Filter
-		$elements = $this->getElements();
-
-		if (is_array($elements) && count($elements)>0) {
-			foreach ($elements as $element) {
-				$ret .= $this->renderElement($element);
-			}
+		foreach ($elements as $element) {
+			$ret .= $this->renderElement($element);
 		}
-
 		return $ret;
 	}
 
-	function renderElement($el)
+	protected function renderElement(Element $element): string
 	{
-        $ret = '<li id="' . $el->getId() . '" class="' . implode(" ",$el->getClasses()) . '">';
-        $ret .= '<div class="effect-grid-element-content">';
-        $ret .= $el->render();
-        $ret .= '</div>';
+		$ret = '<li id="' . esc_attr($element->getId()) . '" class="' . esc_attr(implode(' ', $element->getClasses())) . '">';
+		$ret .= '<div class="effective-grid-element-content">';
+		$ret .= $element->render();
+		$ret .= '</div>';
 		$ret .= '</li>';
 		return $ret;
 	}
 
-	function renderPagination()
+	protected function renderPaginationBlock(): string
 	{
-
-		$ret = '';
-		$ret .= '<div class="effective-grid-pagination">';
-		$ret .= '	<ul>';
-
-
+		$ret = '<div class="effective-grid-pagination">';
+		$ret .= '<ul>';
 		$ret .= $this->renderPaginationElements();
-
-
-		$ret .= '	</ul>';
-		$ret .= '</div>';
-
+		$ret .= '</ul>';
 		$ret .= '</div>';
 
 		return $ret;
 	}
 
-	function renderPaginationElements()
+	protected function renderPaginationElements(): string
 	{
-		$x = $this->page;
-		$x = max($x-4,1);
-		$y=min($x+8, $this->getPageCount());
+		$pageCount = $this->getPageCount();
+		$start = max($this->page - 4, 1);
+		$end = min($start + 8, $pageCount);
 
 		$ret = '';
+		$ret .= $this->renderPaginationLink(1, '&laquo;', 'egrid-page-link-first');
 
-        $ret .= $this->renderPaginationElement(1, '&laquo;', 'egrid-page-link-first');
-
-		for ($i=$x;$i<=$y;$i++) {
-
-			    $ret .= $this->renderPaginationElement($i);
+		for ($i = $start; $i <= $end; $i++) {
+			$ret .= $this->renderPaginationLink($i);
 		}
-		$ret .= $this->renderPaginationElement($this->getPageCount(), '&raquo;', 'egrid-page-link-last');
+
+		$ret .= $this->renderPaginationLink($pageCount, '&raquo;', 'egrid-page-link-last');
 
 		return $ret;
 	}
 
-	function renderPaginationElement($pindex, $label='', $class='')
+	protected function renderPaginationLink(int $pageIndex, string $label = '', string $class = ''): string
 	{
-		$ret = '<li class="egrid-page-link-' . $pindex . ' ' . $class . ' ' . ($pindex==$this->page?'egrid-current-page ':'') . (abs($pindex-$this->page)<=1?'egrid-close-page':'') . '"><a href="' . $this->getPaginationLink($pindex) . '">' . (!empty($label)?$label:$pindex) . '</a></li>';
-		return $ret;
+		$classes = ['egrid-page-link-' . $pageIndex];
+		if (!empty($class)) {
+			$classes[] = $class;
+		}
+		if ($pageIndex === $this->page) {
+			$classes[] = 'egrid-current-page';
+		}
+		if (abs($pageIndex - $this->page) <= 1) {
+			$classes[] = 'egrid-close-page';
+		}
+
+		$displayLabel = !empty($label) ? $label : (string)$pageIndex;
+
+		return '<li class="' . esc_attr(implode(' ', $classes)) . '"><a href="' . esc_url($this->getPaginationLink($pageIndex)) . '">' . $displayLabel . '</a></li>';
 	}
 
-	function getPaginationLink($pindex) {
-		return '?egrid_page='.$pindex;
+	protected function getPaginationLink(int $pageIndex): string
+	{
+		return '?egrid_page=' . $pageIndex;
 	}
 
 	abstract public function getElements(): array;
 	abstract public function getElementCount(): int;
-	function getPageCount()	{
-        return ceil($this->getElementCount() / $this->itemsPerPage);
-    }
-	function setPage($page) { $this->page = $page; }
 
-	function getClasses($additional=array())
+	public function getPageCount(): int
 	{
-		if (empty($additional))
-			$additional = array();
+		return (int)ceil($this->getElementCount() / $this->itemsPerPage);
+	}
 
-		if (is_string($additional))
-			$additional = array($additional);
+	public function setPage(int $page): void
+	{
+		$this->page = $page;
+	}
 
-		return array_merge(array('effective-grid'), $additional);
+	protected function getClasses(): array
+	{
+		return ['effective-grid'];
 	}
 }

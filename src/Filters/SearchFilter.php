@@ -7,30 +7,36 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 class SearchFilter extends Filter
 {
-	public $currentValue = '';
+	public string $currentValue = '';
 
-	public function __construct($id, $title, $placeholder='', $currentValue='')
+	public function __construct(string $id, string $title, string $placeholder = '', string $currentValue = '')
 	{
 		parent::__construct($id, $title, $placeholder);
-		$this->currentValue=$currentValue;
+		$this->currentValue = $currentValue;
 	}
 
 	protected function renderElement(): string
 	{
-		return '<input name="egrid_search" type="text" value="' . $this->currentValue . '" />';
+		return '<input name="egrid_search" type="text" value="' . esc_attr($this->currentValue) . '" placeholder="' . esc_attr($this->getPlaceholder()) . '" />';
 	}
 
-	protected function getClasses($additional = array())
+	protected function getClasses(): array
 	{
-		return array_merge(
-			parent::getClasses($additional),
-			array('effective-grid-search-filter')
-		);
+		return array_merge(parent::getClasses(), ['effective-grid-search-filter']);
 	}
 
 	public function constructQuery(array &$args, array &$tax_query): void
 	{
-		if (!empty($this->currentValue))
+		if (!empty($this->currentValue)) {
 			$args['s'] = $this->currentValue;
+		}
+	}
+
+	public function getUrlParams(): array
+	{
+		if (empty($this->currentValue)) {
+			return [];
+		}
+		return ['egrid_search' => $this->currentValue];
 	}
 }
