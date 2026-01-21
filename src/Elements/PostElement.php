@@ -1,10 +1,15 @@
 <?php
+namespace EffectiveGrid\Elements;
 
-class EffectiveGrid_PostElement extends EffectiveGrid_GridElement
+use EffectiveGrid\Element;
+
+defined( 'ABSPATH' ) or die( 'No direct access.' );
+
+class PostElement extends Element
 {
-	public $post=null;	
+	public $post=null;
 	public $_image_size = 'square';
-	
+
 	function __construct($post)
 	{
 		if (is_object($post)) {
@@ -14,65 +19,62 @@ class EffectiveGrid_PostElement extends EffectiveGrid_GridElement
 			parent::__construct($post);
 			$this->post = get_post($post);
 		}
-		
+
 	}
-		
+
 	public function getClasses($additional=array())
 	{
 		$classes = array('effective-grid-post-element');
-		
+
 				return array_merge(
-			parent::getClasses($additional), 
+			parent::getClasses($additional),
 			$classes
 		);
 	}
-	
+
 	public function getTitle() {
 		//Filter
 		return $this->post->post_title;
 	}
-	
+
 	public function getLink() {
 		//Filter
 		return get_permalink($this->post->ID);
 	}
-	
+
 	public function render()
 	{
+		$ret = '';
 		$post_image_id = get_post_thumbnail_id($this->post->ID);
 		$md = wp_get_attachment_metadata($post_image_id, true);
 		$image_attributes = wp_get_attachment_image_src( $post_image_id , 'full');
-		
+
 		if ($md) {
-			
+
 				//$flythumb = fly_get_attachment_image_src($post_image_id, array(225,200), array( 'center', 'top' ));
 				$flythumb = fly_get_attachment_image_src($post_image_id, array(600,400), array('center', 'center'));
-						
+
 			/*if ($ratio>2) {
 				//$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), false);
 				$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), array( 'center', 'top' ));
 			} else {
-				//$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), true); 
+				//$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), true);
 				$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), false);
 			}*/
-			
-			
+
+
 			if ($flythumb) {
 				$ret = '<div class="effective-grid-post-image-container">';
 				$ret .= $this->linkIt('<img src="' . $flythumb['src'] . '" />');
 				$ret .='</div>';
 			}
 		}
-		
+
         $ret .= parent::render();
 
-		
-		
+
+
 		return $ret;
 	}
-	
+
 }
-
-
-
-	

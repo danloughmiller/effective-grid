@@ -1,0 +1,17 @@
+{
+    "name": "effectwebagency/effective-grid",
+    "description": "WordPress grid plugin with filtering capabilities",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "EffectiveGrid\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.3"
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

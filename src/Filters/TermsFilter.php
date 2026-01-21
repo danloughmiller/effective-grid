@@ -1,18 +1,20 @@
 <?php
+namespace EffectiveGrid\Filters;
+
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
-class EffectiveGrid_TermsFilter extends EffectiveGrid_DropdownFilter
+class TermsFilter extends DropdownFilter
 {
 	public $taxonomy = '';
-	
+
 	public function __construct($id, $title, $placeholder='', $taxonomy=false, $selected='')
 	{
 		parent::__construct($id, $title, $placeholder, array(), $selected);
-		
+
 		if ($taxonomy) {
 			$this->taxonomy = $taxonomy;
-            $terms = get_terms(array('taxonomy'=>$taxonomy, 'parent'=>0));	
-		
+            $terms = get_terms(array('taxonomy'=>$taxonomy, 'parent'=>0));
+
 			if ($terms) {
 				foreach ($terms as $t) {
 					$this->addOption($t->slug, $t->name, $t);
@@ -20,7 +22,7 @@ class EffectiveGrid_TermsFilter extends EffectiveGrid_DropdownFilter
 			}
 		}
     }
-    
+
     public function addChildren($key, $value, $data=false)
     {
         if (is_a($data, 'WP_Term')) {
@@ -32,20 +34,20 @@ class EffectiveGrid_TermsFilter extends EffectiveGrid_DropdownFilter
 			}
         }
     }
-	
+
 	function getSelectName()
 	{
 		return 'egrid_filter[' . $this->taxonomy . ']';
 	}
-	
-	protected function get_classes($additional=array())
+
+	protected function getClasses($additional=array())
 	{
 		return array_merge(
-			parent::get_classes($additional), 
+			parent::getClasses($additional),
 			array('effective-grid-terms-filter', 'effective-grid-terms-filter-'.$this->taxonomy)
 		);
 	}
-	
+
 	function constructQuery(&$args, &$tax_query)
 	{
 		if (!empty($this->selected)) {

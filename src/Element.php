@@ -1,27 +1,29 @@
 <?php
-include_once('elements/egrid-postelement.php');
+namespace EffectiveGrid;
 
-class EffectiveGrid_GridElement
+defined( 'ABSPATH' ) or die( 'No direct access.' );
+
+class Element
 {
 	public $id = false;
-	
+
 	public $_renderTitle = true;
 	public $_renderEmptyTitle = false;
-	
+
 	function __construct($id)
 	{
 		$this->id = $id;
 	}
-	
+
 	public function getId() { return 'effective-grid-element-'.$this->id; }
 	public function getClasses($additional=array())
 	{
-		if (empty($additional)) 
+		if (empty($additional))
 			$additional = array();
-		
+
 		if (is_string($additional))
 			$additional = array($additional);
-		
+
 		return array_merge(array('effective-grid-element'), $additional);
 	}
 	public function getTitle() { }
@@ -32,17 +34,18 @@ class EffectiveGrid_GridElement
 			$ret = '<a ' . $attrs . ' href="' . $link . '">' . $html . '</a>';
 			return $ret;
 		}
-		
+
 		return $html;
 	}
-	
+
 	public function render()
 	{
+		$ret = '';
 		if ($this->_renderTitle && ($this->_renderEmptyTitle || !empty($this->getTitle())))
 			$ret .= '<span class="effective-grid-title">' . $this->linkIt($this->getTitle()) .'</span>';
-		
-		
+
+
 		return $ret;
 	}
-	
+
 }

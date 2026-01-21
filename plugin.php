@@ -16,10 +16,8 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 DEFINE('EGRID_DEV_MODE', false);
 DEFINE('EGRID_FILTER_PREFIX', 'egrid-');
 
-include_once(dirname(__FILE__).'/classes/egrid-grid.php');
-include_once(dirname(__FILE__).'/classes/egrid-filters.php');
-include_once(dirname(__FILE__).'/classes/egrid-elements.php');
-include_once(dirname(__FILE__).'/includes/egrid-shortcodes.php');
+// Composer autoloader
+require_once __DIR__ . '/vendor/autoload.php';
 
 class EffectiveGrid
 {
