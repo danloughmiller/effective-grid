@@ -5,47 +5,26 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 abstract class Element
 {
-	public $id = false;
+	public int|string $id;
 
-	public $_renderTitle = true;
-	public $_renderEmptyTitle = false;
-
-	function __construct($id)
+	public function __construct(int|string $id)
 	{
 		$this->id = $id;
 	}
 
-	public function getId() { return 'effective-grid-element-'.$this->id; }
-	public function getClasses($additional=array())
+	public function getId(): string
 	{
-		if (empty($additional))
-			$additional = array();
-
-		if (is_string($additional))
-			$additional = array($additional);
-
-		return array_merge(array('effective-grid-element'), $additional);
+		return 'effective-grid-element-' . $this->id;
 	}
-	abstract public function getTitle(): string;
-	abstract public function getLink(): string;
-	public function linkIt($html, $attrs='') {
-		$link = $this->getLink();
-		if (!empty($link)) {
-			$ret = '<a ' . $attrs . ' href="' . $link . '">' . $html . '</a>';
-			return $ret;
+
+	public function getClasses(array|string $additional = []): array
+	{
+		if (is_string($additional)) {
+			$additional = [$additional];
 		}
 
-		return $html;
+		return array_merge(['effective-grid-element'], $additional);
 	}
 
-	public function render()
-	{
-		$ret = '';
-		if ($this->_renderTitle && ($this->_renderEmptyTitle || !empty($this->getTitle())))
-			$ret .= '<span class="effective-grid-title">' . $this->linkIt($this->getTitle()) .'</span>';
-
-
-		return $ret;
-	}
-
+	abstract public function render(): string;
 }

@@ -9,6 +9,7 @@ class PostElement extends Element
 {
 	public \WP_Post $post;
 	public string $imageSize = 'medium_large';
+	public bool $renderTitle = true;
 
 	public function __construct(\WP_Post|int $post)
 	{
@@ -20,13 +21,11 @@ class PostElement extends Element
 		parent::__construct($this->post->ID);
 	}
 
-	public function getClasses($additional=array())
+	public function getClasses(array|string $additional = []): array
 	{
-		$classes = array('effective-grid-post-element');
-
-				return array_merge(
+		return array_merge(
 			parent::getClasses($additional),
-			$classes
+			['effective-grid-post-element']
 		);
 	}
 
@@ -40,6 +39,15 @@ class PostElement extends Element
 		return get_permalink($this->post->ID);
 	}
 
+	protected function linkIt(string $html, string $attrs = ''): string
+	{
+		$link = $this->getLink();
+		if (!empty($link)) {
+			return '<a ' . $attrs . ' href="' . esc_url($link) . '">' . $html . '</a>';
+		}
+		return $html;
+	}
+
 	public function render(): string
 	{
 		$ret = '';
@@ -49,15 +57,16 @@ class PostElement extends Element
 			$imageSrc = wp_get_attachment_image_src($thumbnailId, $this->imageSize);
 
 			if ($imageSrc) {
-				$ret = '<div class="effective-grid-post-image-container">';
+				$ret .= '<div class="effective-grid-post-image-container">';
 				$ret .= $this->linkIt('<img src="' . esc_url($imageSrc[0]) . '" width="' . esc_attr($imageSrc[1]) . '" height="' . esc_attr($imageSrc[2]) . '" />');
 				$ret .= '</div>';
 			}
 		}
 
-		$ret .= parent::render();
+		if ($this->renderTitle && !empty($this->getTitle())) {
+			$ret .= '<span class="effective-grid-title">' . $this->linkIt(esc_html($this->getTitle())) . '</span>';
+		}
 
 		return $ret;
 	}
-
 }
