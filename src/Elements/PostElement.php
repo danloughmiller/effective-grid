@@ -7,19 +7,17 @@ defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 class PostElement extends Element
 {
-	public $post=null;
-	public $_image_size = 'square';
+	public \WP_Post $post;
+	public string $imageSize = 'medium_large';
 
-	function __construct($post)
+	public function __construct(\WP_Post|int $post)
 	{
-		if (is_object($post)) {
-			parent::__construct($post->ID);
-			$this->post=$post;
+		if ($post instanceof \WP_Post) {
+			$this->post = $post;
 		} else {
-			parent::__construct($post);
 			$this->post = get_post($post);
 		}
-
+		parent::__construct($this->post->ID);
 	}
 
 	public function getClasses($additional=array())
@@ -42,37 +40,22 @@ class PostElement extends Element
 		return get_permalink($this->post->ID);
 	}
 
-	public function render()
+	public function render(): string
 	{
 		$ret = '';
-		$post_image_id = get_post_thumbnail_id($this->post->ID);
-		$md = wp_get_attachment_metadata($post_image_id, true);
-		$image_attributes = wp_get_attachment_image_src( $post_image_id , 'full');
+		$thumbnailId = get_post_thumbnail_id($this->post->ID);
 
-		if ($md) {
+		if ($thumbnailId) {
+			$imageSrc = wp_get_attachment_image_src($thumbnailId, $this->imageSize);
 
-				//$flythumb = fly_get_attachment_image_src($post_image_id, array(225,200), array( 'center', 'top' ));
-				$flythumb = fly_get_attachment_image_src($post_image_id, array(600,400), array('center', 'center'));
-
-			/*if ($ratio>2) {
-				//$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), false);
-				$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), array( 'center', 'top' ));
-			} else {
-				//$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), true);
-				$flymedium = fly_get_attachment_image_src($post_image_id, array(800,600), false);
-			}*/
-
-
-			if ($flythumb) {
+			if ($imageSrc) {
 				$ret = '<div class="effective-grid-post-image-container">';
-				$ret .= $this->linkIt('<img src="' . $flythumb['src'] . '" />');
-				$ret .='</div>';
+				$ret .= $this->linkIt('<img src="' . esc_url($imageSrc[0]) . '" width="' . esc_attr($imageSrc[1]) . '" height="' . esc_attr($imageSrc[2]) . '" />');
+				$ret .= '</div>';
 			}
 		}
 
-        $ret .= parent::render();
-
-
+		$ret .= parent::render();
 
 		return $ret;
 	}
