@@ -3,7 +3,7 @@ namespace EffectiveGrid;
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
-class Element
+abstract class Element
 {
 	public $id = false;
 
@@ -26,8 +26,8 @@ class Element
 
 		return array_merge(array('effective-grid-element'), $additional);
 	}
-	public function getTitle() { }
-	public function getLink() { }
+	abstract public function getTitle(): string;
+	abstract public function getLink(): string;
 	public function linkIt($html, $attrs='') {
 		$link = $this->getLink();
 		if (!empty($link)) {

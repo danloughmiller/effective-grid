@@ -32,13 +32,13 @@ class PostElement extends Element
 		);
 	}
 
-	public function getTitle() {
-		//Filter
+	public function getTitle(): string
+	{
 		return $this->post->post_title;
 	}
 
-	public function getLink() {
-		//Filter
+	public function getLink(): string
+	{
 		return get_permalink($this->post->ID);
 	}
 

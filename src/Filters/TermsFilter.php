@@ -48,7 +48,7 @@ class TermsFilter extends DropdownFilter
 		);
 	}
 
-	function constructQuery(&$args, &$tax_query)
+	public function constructQuery(array &$args, array &$tax_query): void
 	{
 		if (!empty($this->selected)) {
 			$tax_query[] = array(

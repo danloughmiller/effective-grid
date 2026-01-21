@@ -15,11 +15,9 @@ class SearchFilter extends Filter
 		$this->currentValue=$currentValue;
 	}
 
-	protected function renderElement()
+	protected function renderElement(): string
 	{
-
-		$ret = '<input name="egrid_search" type="text" value="' . $this->currentValue . '" />';
-		return $ret;
+		return '<input name="egrid_search" type="text" value="' . $this->currentValue . '" />';
 	}
 
 	protected function getClasses($additional = array())
@@ -30,7 +28,7 @@ class SearchFilter extends Filter
 		);
 	}
 
-	function constructQuery(&$args, &$tax_query)
+	public function constructQuery(array &$args, array &$tax_query): void
 	{
 		if (!empty($this->currentValue))
 			$args['s'] = $this->currentValue;

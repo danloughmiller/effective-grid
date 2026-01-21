@@ -3,7 +3,7 @@ namespace EffectiveGrid;
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
-class Grid
+abstract class Grid
 {
 	public $grid_id = false;
 	public $filters = null;
@@ -139,8 +139,8 @@ class Grid
 		return '?egrid_page='.$pindex;
 	}
 
-	function getElements() {}
-	function getElementCount() { }
+	abstract public function getElements(): array;
+	abstract public function getElementCount(): int;
 	function getPageCount()	{
         return ceil($this->getElementCount() / $this->itemsPerPage);
     }

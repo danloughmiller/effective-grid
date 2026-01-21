@@ -20,9 +20,8 @@ abstract class DropdownFilter extends Filter
 	}
 
 	protected function getSelectName() { }
-	protected function renderElement()
+	protected function renderElement(): string
 	{
-
 		$ret = '<select class="' . ($this->_renderSelect2?'egrid-select2':'') . '" data-minimum-results-for-search="Infinity" name="' . $this->getSelectName() . '">';
 
 		if (!empty($this->placeholder))

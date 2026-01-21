@@ -26,7 +26,7 @@ class DefinedOptionsListFilter extends DropdownFilter
 		);
 	}
 
-	function constructQuery(&$args, &$tax_query)
+	public function constructQuery(array &$args, array &$tax_query): void
 	{
 		if (!empty($this->selected)) {
 			$definedSet = $this->getDefinedOptionsBySlug($this->selected);
@@ -37,9 +37,8 @@ class DefinedOptionsListFilter extends DropdownFilter
 				//Wordpress will interpret an empty array as 'all posts' not none, we'll provide some fake post ids to prevent that
 				$args['post__in'] = array(-1,-2,-3);
 			}
-
-        }
-    }
+		}
+	}
 
     protected function getDefinedOptionsBySlug($slug)
     {

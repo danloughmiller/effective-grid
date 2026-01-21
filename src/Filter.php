@@ -34,10 +34,7 @@ abstract class Filter
 		return $ret;
 	}
 
-	protected function renderElement()
-	{
-
-	}
+	abstract protected function renderElement(): string;
 
 	protected function getClasses($additional = array())
 	{
@@ -50,9 +47,6 @@ abstract class Filter
 		return array_merge(array('effective-grid-filter'), $additional);
 	}
 
-	public function constructQuery(&$args, &$tax_query)
-	{
-
-	}
+	abstract public function constructQuery(array &$args, array &$tax_query): void;
 
 }

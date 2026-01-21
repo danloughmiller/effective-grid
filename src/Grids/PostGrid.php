@@ -2,7 +2,6 @@
 namespace EffectiveGrid\Grids;
 
 use EffectiveGrid\Grid;
-use EffectiveGrid\Filters;
 use EffectiveGrid\Elements\PostElement;
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
@@ -54,25 +53,26 @@ class PostGrid extends Grid
 		return $args;
 	}
 
-	function getElements()
+	public function getElements(): array
 	{
-        $posts = get_posts($this->constructQuery());
+		$posts = get_posts($this->constructQuery());
 
 		$elements = array();
 		foreach ($posts as $r) {
-            if (!empty($this->createElementCallback)) {
-                $elements[] = call_user_func($this->createElementCallback, $r);
-            } else {
-                $elements[] = new PostElement($r);
-            }
+			if (!empty($this->createElementCallback)) {
+				$elements[] = call_user_func($this->createElementCallback, $r);
+			} else {
+				$elements[] = new PostElement($r);
+			}
 		}
 		return $elements;
 	}
 
-	function getElementCount() {
-        $query = $this->constructQuery();
-        $query['posts_per_page']=-1;
-        $q = get_posts($query);
+	public function getElementCount(): int
+	{
+		$query = $this->constructQuery();
+		$query['posts_per_page'] = -1;
+		$q = get_posts($query);
 		return count($q);
 	}
 
