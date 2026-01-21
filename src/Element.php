@@ -17,13 +17,9 @@ abstract class Element
 		return 'effective-grid-element-' . $this->id;
 	}
 
-	public function getClasses(array|string $additional = []): array
+	public function getClasses(): array
 	{
-		if (is_string($additional)) {
-			$additional = [$additional];
-		}
-
-		return array_merge(['effective-grid-element'], $additional);
+		return ['effective-grid-element'];
 	}
 
 	abstract public function render(): string;

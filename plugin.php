@@ -13,11 +13,14 @@ Author URI:  https://www.effectwebagency.com
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
-DEFINE('EGRID_DEV_MODE', false);
-DEFINE('EGRID_FILTER_PREFIX', 'egrid-');
-
 // Composer autoloader
 require_once __DIR__ . '/vendor/autoload.php';
+
+use EffectiveGrid\Constants;
+
+// Legacy constants for backwards compatibility
+DEFINE('EGRID_DEV_MODE', Constants::DEV_MODE);
+DEFINE('EGRID_FILTER_PREFIX', Constants::FILTER_PREFIX);
 
 class EffectiveGrid
 {

@@ -2,7 +2,9 @@
 namespace EffectiveGrid\Grids;
 
 use EffectiveGrid\Grid;
+use EffectiveGrid\Element;
 use EffectiveGrid\Filters;
+use EffectiveGrid\QueryBuilder;
 use EffectiveGrid\Elements\PostElement;
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
@@ -12,15 +14,15 @@ class PostGrid extends Grid
 	protected string $postType;
 	protected array $taxonomies;
 	protected array $additionalQueryArgs;
-	/** @var callable|null */
-	protected $createElementCallback;
+	/** @var (\Closure(\WP_Post): Element)|null */
+	protected ?\Closure $createElementCallback;
 
 	public function __construct(
 		string $id,
 		string $postType = 'post',
 		array $taxonomies = [],
 		array $additionalQueryArgs = [],
-		?callable $createElementCallback = null,
+		?\Closure $createElementCallback = null,
 		?Filters $filters = null
 	) {
 		parent::__construct($id, $filters);
@@ -33,30 +35,19 @@ class PostGrid extends Grid
 
 	protected function constructQuery(): array
 	{
-		$args = [
-			'post_type' => $this->postType,
-			'posts_per_page' => $this->itemsPerPage,
-			'paged' => $this->page,
-			'orderby' => 'title',
-			'order' => 'ASC'
-		];
+		$builder = new QueryBuilder();
+		$builder
+			->setPostType($this->postType)
+			->setPostsPerPage($this->itemsPerPage)
+			->setPage($this->page)
+			->setOrderBy('title', 'ASC')
+			->mergeArgs($this->additionalQueryArgs);
 
-		$args = array_merge($args, $this->additionalQueryArgs);
-
-		$filters = $this->getFilters();
-		if (!empty($filters->filters)) {
-			$tax_query = [];
-
-			foreach ($filters->filters as $filter) {
-				$filter->constructQuery($args, $tax_query);
-			}
-
-			if (!empty($tax_query)) {
-				$args['tax_query'] = $tax_query;
-			}
+		foreach ($this->getFilters()->filters as $filter) {
+			$builder->applyFilter($filter);
 		}
 
-		return $args;
+		return $builder->build();
 	}
 
 	public function getElements(): array
@@ -80,17 +71,6 @@ class PostGrid extends Grid
 		$query['posts_per_page'] = -1;
 		$query['fields'] = 'ids';
 		return count(get_posts($query));
-	}
-
-	protected function getPaginationLink(int $pageIndex): string
-	{
-		$params = ['egrid_page' => (string)$pageIndex];
-
-		foreach ($this->getFilters()->filters as $filter) {
-			$params = array_merge($params, $filter->getUrlParams());
-		}
-
-		return '?' . http_build_query($params);
 	}
 
 	protected function getClasses(): array

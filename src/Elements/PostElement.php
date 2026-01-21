@@ -21,10 +21,10 @@ class PostElement extends Element
 		parent::__construct($this->post->ID);
 	}
 
-	public function getClasses(array|string $additional = []): array
+	public function getClasses(): array
 	{
 		return array_merge(
-			parent::getClasses($additional),
+			parent::getClasses(),
 			['effective-grid-post-element']
 		);
 	}

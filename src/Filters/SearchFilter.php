@@ -2,6 +2,7 @@
 namespace EffectiveGrid\Filters;
 
 use EffectiveGrid\Filter;
+use EffectiveGrid\Constants;
 
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
@@ -17,7 +18,7 @@ class SearchFilter extends Filter
 
 	protected function renderElement(): string
 	{
-		return '<input name="egrid_search" type="text" value="' . esc_attr($this->currentValue) . '" placeholder="' . esc_attr($this->getPlaceholder()) . '" />';
+		return '<input name="' . Constants::PARAM_SEARCH . '" type="text" value="' . esc_attr($this->currentValue) . '" placeholder="' . esc_attr($this->getPlaceholder()) . '" />';
 	}
 
 	protected function getClasses(): array
@@ -37,6 +38,6 @@ class SearchFilter extends Filter
 		if (empty($this->currentValue)) {
 			return [];
 		}
-		return ['egrid_search' => $this->currentValue];
+		return [Constants::PARAM_SEARCH => $this->currentValue];
 	}
 }

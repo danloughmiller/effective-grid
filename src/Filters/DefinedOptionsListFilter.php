@@ -1,6 +1,8 @@
 <?php
 namespace EffectiveGrid\Filters;
 
+use EffectiveGrid\Constants;
+
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 class DefinedOptionsListFilter extends DropdownFilter
@@ -17,7 +19,7 @@ class DefinedOptionsListFilter extends DropdownFilter
 
 	protected function getSelectName(): string
 	{
-		return 'egrid_filter[' . $this->getId() . ']';
+		return Constants::PARAM_FILTER . '[' . $this->getId() . ']';
 	}
 
 	protected function getClasses(): array
@@ -55,6 +57,6 @@ class DefinedOptionsListFilter extends DropdownFilter
 		if (empty($this->selected)) {
 			return [];
 		}
-		return ['egrid_filter[' . $this->getId() . ']' => $this->selected];
+		return [Constants::PARAM_FILTER . '[' . $this->getId() . ']' => $this->selected];
 	}
 }

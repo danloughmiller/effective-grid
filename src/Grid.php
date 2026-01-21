@@ -1,6 +1,8 @@
 <?php
 namespace EffectiveGrid;
 
+use EffectiveGrid\Constants;
+
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 abstract class Grid
@@ -15,6 +17,7 @@ abstract class Grid
 	public bool $paged = true;
 	public int $itemsPerPage = 50;
 	public int $page = 1;
+	public int $paginationWindow = 4;
 
 	public function __construct(string $id, ?Filters $filters = null)
 	{
@@ -102,8 +105,8 @@ abstract class Grid
 	protected function renderPaginationElements(): string
 	{
 		$pageCount = $this->getPageCount();
-		$start = max($this->page - 4, 1);
-		$end = min($start + 8, $pageCount);
+		$start = max($this->page - $this->paginationWindow, 1);
+		$end = min($start + ($this->paginationWindow * 2), $pageCount);
 
 		$ret = '';
 		$ret .= $this->renderPaginationLink(1, '&laquo;', 'egrid-page-link-first');
@@ -137,7 +140,13 @@ abstract class Grid
 
 	protected function getPaginationLink(int $pageIndex): string
 	{
-		return '?egrid_page=' . $pageIndex;
+		$params = [Constants::PARAM_PAGE => (string)$pageIndex];
+
+		foreach ($this->filters->filters as $filter) {
+			$params = array_merge($params, $filter->getUrlParams());
+		}
+
+		return '?' . http_build_query($params);
 	}
 
 	abstract public function getElements(): array;

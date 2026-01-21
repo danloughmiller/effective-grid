@@ -32,8 +32,8 @@ class Filters
 	protected function getLabel(string $labelKey, string $default = ''): string
 	{
 		if (array_key_exists($labelKey, $this->labels)) {
-			$val = apply_filters('EFFECTIVE_GRID_LABEL_FILTER', $this->labels[$labelKey], $labelKey, $this);
-			return apply_filters('EFFECTIVE_GRID_FILTER_LABEL_FILTER', $val, $labelKey, $this);
+			$val = apply_filters(Constants::HOOK_LABEL_FILTER, $this->labels[$labelKey], $labelKey, $this);
+			return apply_filters(Constants::HOOK_FILTER_LABEL_FILTER, $val, $labelKey, $this);
 		}
 
 		return $default ?: $labelKey;
@@ -44,7 +44,7 @@ class Filters
 	 */
 	public function getFilters(): array
 	{
-		return apply_filters(EGRID_FILTER_PREFIX . 'filters', $this->filters);
+		return apply_filters(Constants::FILTER_PREFIX . 'filters', $this->filters);
 	}
 
 	public function addFilter(Filter $filter): self

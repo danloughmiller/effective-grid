@@ -1,6 +1,8 @@
 <?php
 namespace EffectiveGrid\Filters;
 
+use EffectiveGrid\Constants;
+
 defined( 'ABSPATH' ) or die( 'No direct access.' );
 
 class TermsFilter extends DropdownFilter
@@ -45,7 +47,7 @@ class TermsFilter extends DropdownFilter
 
 	protected function getSelectName(): string
 	{
-		return 'egrid_filter[' . $this->taxonomy . ']';
+		return Constants::PARAM_FILTER . '[' . $this->taxonomy . ']';
 	}
 
 	protected function getClasses(): array
@@ -72,6 +74,6 @@ class TermsFilter extends DropdownFilter
 		if (empty($this->selected)) {
 			return [];
 		}
-		return ['egrid_filter[' . $this->taxonomy . ']' => $this->selected];
+		return [Constants::PARAM_FILTER . '[' . $this->taxonomy . ']' => $this->selected];
 	}
 }
