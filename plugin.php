@@ -37,10 +37,10 @@ class EffectiveGrid
 	
 	public function register_plugin_styles()
 	{
-		wp_register_style( 'effective-grid', plugins_url( 'effective-grid/assets/css/egrid.css' ) );			
-		
-		wp_register_style( 'select2', plugins_url( 'effective-grid/assets/third-party/select2/css/select2.min.css' ) );	
-		
+		wp_register_style( 'effective-grid', plugins_url( 'effective-grid/assets/css/src/egrid.css' ) );
+
+		wp_register_style( 'select2', plugins_url( 'effective-grid/assets/third-party/select2/css/select2.min.css' ) );
+
 		wp_enqueue_style( 'effective-grid' );
 		wp_enqueue_style( 'select2' );
 	}
