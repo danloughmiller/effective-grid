@@ -17,7 +17,7 @@
   display: block;
   font-weight: bold;
 }
-.effective-grid-filters input,
+.effective-grid-filters input:not([type=checkbox], [type=radio]),
 .effective-grid-filters select,
 .effective-grid-filters a.egrid-button,
 .effective-grid-filters button {
